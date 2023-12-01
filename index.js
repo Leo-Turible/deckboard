@@ -7,7 +7,8 @@ document.getElementById('disconnectBtn').addEventListener('click', disconnectFro
 document.getElementById('startStreamBtn').addEventListener('click', startStreaming);
 document.getElementById('stopStreamBtn').addEventListener('click', stopStreaming);
 document.getElementById('changeSceneBtn').addEventListener('click', changeToTestScene);
-document.getElementById('toggleMuteBtn').addEventListener('click', toggleMicrophoneMute); // Add event listener
+document.getElementById('changeToSceneBtn').addEventListener('click', changeToScene);
+document.getElementById('toggleMuteBtn').addEventListener('click', toggleMicrophoneMute);
 
 async function connectToOBS() {
     try {
@@ -26,8 +27,6 @@ async function connectToOBS() {
     }
 }
 
-
-
 async function disconnectFromOBS() {
     await obs.disconnect();
     console.log('Disconnected from OBS Studio');
@@ -35,9 +34,6 @@ async function disconnectFromOBS() {
 }
 
 async function startStreaming() {
-    // await obs.call('StartStreaming');
-    // console.log('Streaming started');
-
     // Start streaming with the 'recording' and 'high_quality' settings
     // await obs.call('StartStreaming', {
     //     'stream': {
@@ -84,12 +80,23 @@ async function changeToTestScene() {
     }
 }
 
+// Function to change to the scene named "Scène"
+async function changeToScene() {
+    try {
+        // Set the current program scene to 'Scène'
+        await obs.call('SetCurrentProgramScene', { sceneName: 'Scène' });
+        console.log('Set current program scene to "Scène"');
+
+        // Execute the GetCurrentProgramScene request
+        const { currentProgramSceneName } = await obs.call('GetCurrentProgramScene');
+        console.log('Current program scene:', currentProgramSceneName);
+    } catch (error) {
+        console.error('Failed to change scene', error.code, error.message);
+    }
+}
+
 async function toggleMicrophoneMute() {
     try {
-        // Replace 'YourMicrophoneSourceName' with the name of your microphone source
-        // await obs.call('ToggleMute', { 'source': 'Mic/Aux' });
-        // console.log('Toggled microphone mute/unmute');
-        // Toggle the input mute for 'Main Microphone'
         const { inputMuted } = await obs.call('ToggleInputMute', { inputName: 'Main Microphone' });
         console.log('Toggled input mute for "Main Microphone". Mute status:', inputMuted);
     } catch (error) {
@@ -103,6 +110,7 @@ function enableButtons() {
     document.getElementById('startStreamBtn').disabled = false;
     document.getElementById('stopStreamBtn').disabled = false;
     document.getElementById('changeSceneBtn').disabled = false;
+    document.getElementById('changeToSceneBtn').disabled = false;
     document.getElementById('toggleMuteBtn').disabled = false;
 }
 
@@ -112,5 +120,6 @@ function disableButtons() {
     document.getElementById('startStreamBtn').disabled = true;
     document.getElementById('stopStreamBtn').disabled = true;
     document.getElementById('changeSceneBtn').disabled = true;
+    document.getElementById('changeToSceneBtn').disabled = true;
     document.getElementById('toggleMuteBtn').disabled = true;
 }
