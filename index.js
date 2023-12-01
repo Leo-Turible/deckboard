@@ -18,7 +18,7 @@ async function connectToOBS() {
         const { currentProgramSceneName } = await obs.call('GetCurrentProgramScene');
         console.log('Current program scene:', currentProgramSceneName);
 
-        
+
 
         enableButtons();
     } catch (error) {
@@ -35,13 +35,39 @@ async function disconnectFromOBS() {
 }
 
 async function startStreaming() {
-    await obs.call('StartStreaming');
-    console.log('Streaming started');
+    // await obs.call('StartStreaming');
+    // console.log('Streaming started');
+
+    // Start streaming with the 'recording' and 'high_quality' settings
+    // await obs.call('StartStreaming', {
+    //     'stream': {
+    //         'type': 'rtmp_custom',
+    //         'settings': {
+    //             'server': 'rtmp://localhost:1935/live',
+    //             'key': 'stream',
+    //         },
+    //     },
+    //     'recording': true,
+    //     'high_quality': true,
+    // });
+    try {
+        await obs.call('StartStream');
+        console.log('Streaming started');
+    } catch (error) {
+        console.error('Failed to start streaming', error.code, error.message);
+    }
+    // Execute the GetStreamStatus request
+    const { GetStreamStatus } = await obs.call('GetStreamStatus');
+    console.log('Streaming started', GetStreamStatus);
 }
 
 async function stopStreaming() {
-    await obs.call('StopStreaming');
-    console.log('Streaming stopped');
+    try {
+        await obs.call('StopStream');
+        console.log('Streaming stopped');
+    } catch (error) {
+        console.error('Failed to stop streaming', error.code, error.message);
+    }
 }
 
 async function changeToTestScene() {
