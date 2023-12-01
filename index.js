@@ -20,6 +20,9 @@ async function connectToOBS() {
         console.log('Current program scene:', currentProgramSceneName);
 
         enableButtons();
+        
+        // Get the initial mute state and update the button color
+        await updateMuteButtonColor();
 
         // Mettre à jour l'état des boutons de changement de scène
         disableSceneButtons(currentProgramSceneName);
@@ -32,6 +35,9 @@ async function disconnectFromOBS() {
     await obs.disconnect();
     console.log('Disconnected from OBS Studio');
     disableButtons();
+
+    // Réinitialiser la couleur du bouton mute/unmute
+    resetMuteButtonColor();
 }
 
 async function startStreaming() {
@@ -112,9 +118,33 @@ async function toggleMicrophoneMute() {
     try {
         const { inputMuted } = await obs.call('ToggleInputMute', { inputName: 'Main Microphone' });
         console.log('Toggled input mute for "Main Microphone". Mute status:', inputMuted);
+
+        // Mettez à jour la couleur du bouton en fonction de l'état du mute
+        const muteBtn = document.getElementById('toggleMuteBtn');
+        muteBtn.classList.toggle('muted', inputMuted);
+        muteBtn.classList.toggle('unmuted', !inputMuted);
     } catch (error) {
         console.error('Failed to toggle microphone mute/unmute', error.code, error.message);
     }
+}
+
+async function updateMuteButtonColor() {
+    try {
+        const { inputMuted } = await obs.call('GetInputMute', { inputName: 'Main Microphone' });
+
+        // Mettez à jour la couleur du bouton en fonction de l'état du mute
+        const muteBtn = document.getElementById('toggleMuteBtn');
+        muteBtn.classList.toggle('muted', inputMuted);
+        muteBtn.classList.toggle('unmuted', !inputMuted);
+    } catch (error) {
+        console.error('Failed to get microphone mute status', error.code, error.message);
+    }
+}
+
+function resetMuteButtonColor() {
+    // Réinitialiser la couleur du bouton mute/unmute
+    const muteBtn = document.getElementById('toggleMuteBtn');
+    muteBtn.classList.remove('muted', 'unmuted');
 }
 
 function enableButtons() {

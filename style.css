@@ -60,3 +60,11 @@ body {
 .custom-btn span {
     margin-top: 10px;
 }
+
+.custom-btn.muted {
+    background-color: red;
+}
+
+.custom-btn.unmuted {
+    background-color: green;
+}
