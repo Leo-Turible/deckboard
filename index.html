@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control OBS Studio</title>
+</head>
+<body>
+    <h1>OBS Studio Controller</h1>
+    <button id="connectBtn">Connect to OBS</button>
+    <button id="disconnectBtn" disabled>Disconnect</button>
+    <button id="startStreamBtn" disabled>Start Stream</button>
+    <button id="stopStreamBtn" disabled>Stop Stream</button>
+    <button id="changeSceneBtn" disabled>Change to Scene "Test"</button>
+    <button id="toggleMuteBtn" disabled>Mute/Unmute Microphone</button> <!-- New button -->
+
+    <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js"></script>
+    <script src="dist/bundle.js"></script>
+</body>
+</html>
