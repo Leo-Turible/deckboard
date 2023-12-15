@@ -7,7 +7,9 @@ document.getElementById('disconnectBtn').addEventListener('click', disconnectFro
 document.getElementById('startStreamBtn').addEventListener('click', startStreaming);
 document.getElementById('stopStreamBtn').addEventListener('click', stopStreaming);
 document.getElementById('changeToIntroBtn').addEventListener('click', changeToIntroScene);
-document.getElementById('changeToSceneBtn').addEventListener('click', changeToScene);
+document.getElementById('changeToPauseBtn').addEventListener('click', changeToPauseScene);
+document.getElementById('changeToOutroBtn').addEventListener('click', changeToOutroScene);
+document.getElementById('changeToCamBtn').addEventListener('click', changeToCamScene);
 document.getElementById('toggleMuteBtn').addEventListener('click', toggleMicrophoneMute);
 
 async function connectToOBS() {
@@ -66,7 +68,6 @@ async function stopStreaming() {
     }
 }
 
-
 async function changeToIntroScene() {
     try {
         // Set the current program scene to 'INTRO'
@@ -84,18 +85,52 @@ async function changeToIntroScene() {
     }
 }
 
-// Function to change to the scene named "Scène"
-async function changeToScene() {
+// Function to change to the scene named "PAUSE"
+async function changeToPauseScene() {
     try {
-        // Set the current program scene to 'Scène'
-        await obs.call('SetCurrentProgramScene', { sceneName: 'Scène' });
-        console.log('Set current program scene to "Scène"');
+        // Set the current program scene to 'PAUSE'
+        await obs.call('SetCurrentProgramScene', { sceneName: 'PAUSE' });
+        console.log('Set current program scene to "PAUSE"');
 
         // Execute the GetCurrentProgramScene request
         const { currentProgramSceneName } = await obs.call('GetCurrentProgramScene');
         console.log('Current program scene:', currentProgramSceneName);
 
-        // Mettre à jour l'état des boutons de changement de scène
+        // Mettre à jour l'état des boutons de changement de PAUSE
+        disableSceneButtons(currentProgramSceneName);
+    } catch (error) {
+        console.error('Failed to change scene', error.code, error.message);
+    }
+}
+
+async function changeToOutroScene() {
+    try {
+        // Set the current program scene to 'OUTRO'
+        await obs.call('SetCurrentProgramScene', { sceneName: 'OUTRO' });
+        console.log('Set current program scene to "OUTRO"');
+
+        // Execute the GetCurrentProgramScene request
+        const { currentProgramSceneName } = await obs.call('GetCurrentProgramScene');
+        console.log('Current program scene:', currentProgramSceneName);
+
+        // Mettre à jour l'état des boutons de changement de OUTRO
+        disableSceneButtons(currentProgramSceneName);
+    } catch (error) {
+        console.error('Failed to change scene', error.code, error.message);
+    }
+}
+
+async function changeToCamScene() {
+    try {
+        // Set the current program scene to 'CAM'
+        await obs.call('SetCurrentProgramScene', { sceneName: 'CAM' });
+        console.log('Set current program scene to "CAM"');
+
+        // Execute the GetCurrentProgramScene request
+        const { currentProgramSceneName } = await obs.call('GetCurrentProgramScene');
+        console.log('Current program scene:', currentProgramSceneName);
+
+        // Mettre à jour l'état des boutons de changement de CAM
         disableSceneButtons(currentProgramSceneName);
     } catch (error) {
         console.error('Failed to change scene', error.code, error.message);
@@ -105,13 +140,21 @@ async function changeToScene() {
 // Fonction pour désactiver les boutons de changement de scène si on est déjà sur la même scène
 function disableSceneButtons(currentSceneName) {
     const INTROSceneBtn = document.getElementById('changeToIntroBtn');
-    const sceneBtn = document.getElementById('changeToSceneBtn');
+    const sceneBtn = document.getElementById('changeToPauseBtn');
+    const outroSceneBtn = document.getElementById('changeToOutroBtn');
+    const camSceneBtn = document.getElementById('changeToCamBtn');
 
     // Désactiver le bouton "Change to Scene 'INTRO'" si on est déjà sur la scène 'INTRO'
     INTROSceneBtn.disabled = currentSceneName === 'INTRO';
 
-    // Désactiver le bouton "Change to Scene 'Scène'" si on est déjà sur la scène 'Scène'
-    sceneBtn.disabled = currentSceneName === 'Scène';
+    // Désactiver le bouton "Change to Scene 'PAUSE'" si on est déjà sur la scène 'PAUSE'
+    sceneBtn.disabled = currentSceneName === 'PAUSE';
+
+    // Désactiver le bouton "Change to Scene 'OUTRO'" si on est déjà sur la scène 'OUTRO'
+    outroSceneBtn.disabled = currentSceneName === 'OUTRO';
+
+    // Désactiver le bouton "Change to Scene 'CAM'" si on est déjà sur la scène 'CAM'
+    camSceneBtn.disabled = currentSceneName === 'CAM';
 }
 
 async function toggleMicrophoneMute() {
@@ -153,7 +196,9 @@ function enableButtons() {
     document.getElementById('startStreamBtn').disabled = false;
     // document.getElementById('stopStreamBtn').disabled = false;
     document.getElementById('changeToIntroBtn').disabled = false;
-    document.getElementById('changeToSceneBtn').disabled = false;
+    document.getElementById('changeToPauseBtn').disabled = false;
+    document.getElementById('changeToOutroBtn').disabled = false;
+    document.getElementById('changeToCamBtn').disabled = false;
     document.getElementById('toggleMuteBtn').disabled = false;
 }
 
@@ -163,6 +208,8 @@ function disableButtons() {
     document.getElementById('startStreamBtn').disabled = true;
     document.getElementById('stopStreamBtn').disabled = true;
     document.getElementById('changeToIntroBtn').disabled = true;
-    document.getElementById('changeToSceneBtn').disabled = true;
+    document.getElementById('changeToPauseBtn').disabled = true;
+    document.getElementById('changeToOutroBtn').disabled = true;
+    document.getElementById('changeToCamBtn').disabled = true;
     document.getElementById('toggleMuteBtn').disabled = true;
 }
