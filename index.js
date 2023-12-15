@@ -6,7 +6,7 @@ document.getElementById('connectBtn').addEventListener('click', connectToOBS);
 document.getElementById('disconnectBtn').addEventListener('click', disconnectFromOBS);
 document.getElementById('startStreamBtn').addEventListener('click', startStreaming);
 document.getElementById('stopStreamBtn').addEventListener('click', stopStreaming);
-document.getElementById('changeSceneBtn').addEventListener('click', changeToTestScene);
+document.getElementById('changeToIntroBtn').addEventListener('click', changeToIntroScene);
 document.getElementById('changeToSceneBtn').addEventListener('click', changeToScene);
 document.getElementById('toggleMuteBtn').addEventListener('click', toggleMicrophoneMute);
 
@@ -67,11 +67,11 @@ async function stopStreaming() {
 }
 
 
-async function changeToTestScene() {
+async function changeToIntroScene() {
     try {
-        // Set the current program scene to 'Test'
-        await obs.call('SetCurrentProgramScene', { sceneName: 'Test' });
-        console.log('Set current program scene to "Test"');
+        // Set the current program scene to 'INTRO'
+        await obs.call('SetCurrentProgramScene', { sceneName: 'INTRO' });
+        console.log('Set current program scene to "INTRO"');
 
         // Execute the GetCurrentProgramScene request
         const { currentProgramSceneName } = await obs.call('GetCurrentProgramScene');
@@ -104,11 +104,11 @@ async function changeToScene() {
 
 // Fonction pour désactiver les boutons de changement de scène si on est déjà sur la même scène
 function disableSceneButtons(currentSceneName) {
-    const testSceneBtn = document.getElementById('changeSceneBtn');
+    const INTROSceneBtn = document.getElementById('changeToIntroBtn');
     const sceneBtn = document.getElementById('changeToSceneBtn');
 
-    // Désactiver le bouton "Change to Scene 'Test'" si on est déjà sur la scène 'Test'
-    testSceneBtn.disabled = currentSceneName === 'Test';
+    // Désactiver le bouton "Change to Scene 'INTRO'" si on est déjà sur la scène 'INTRO'
+    INTROSceneBtn.disabled = currentSceneName === 'INTRO';
 
     // Désactiver le bouton "Change to Scene 'Scène'" si on est déjà sur la scène 'Scène'
     sceneBtn.disabled = currentSceneName === 'Scène';
@@ -152,7 +152,7 @@ function enableButtons() {
     document.getElementById('disconnectBtn').disabled = false;
     document.getElementById('startStreamBtn').disabled = false;
     // document.getElementById('stopStreamBtn').disabled = false;
-    document.getElementById('changeSceneBtn').disabled = false;
+    document.getElementById('changeToIntroBtn').disabled = false;
     document.getElementById('changeToSceneBtn').disabled = false;
     document.getElementById('toggleMuteBtn').disabled = false;
 }
@@ -162,7 +162,7 @@ function disableButtons() {
     document.getElementById('disconnectBtn').disabled = true;
     document.getElementById('startStreamBtn').disabled = true;
     document.getElementById('stopStreamBtn').disabled = true;
-    document.getElementById('changeSceneBtn').disabled = true;
+    document.getElementById('changeToIntroBtn').disabled = true;
     document.getElementById('changeToSceneBtn').disabled = true;
     document.getElementById('toggleMuteBtn').disabled = true;
 }
