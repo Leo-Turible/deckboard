@@ -11,10 +11,11 @@ document.getElementById('changeToPauseBtn').addEventListener('click', changeToPa
 document.getElementById('changeToOutroBtn').addEventListener('click', changeToOutroScene);
 document.getElementById('changeToCamBtn').addEventListener('click', changeToCamScene);
 document.getElementById('toggleMuteBtn').addEventListener('click', toggleMicrophoneMute);
+document.getElementById('toggleDesktopAudioBtn').addEventListener('click', toggleDesktopAudioMute);
 
 async function connectToOBS() {
     try {
-        await obs.connect('ws://10.152.7.70:4444');
+        await obs.connect('ws://10.152.7.43:4444');
         console.log('Connected to OBS Studio');
 
         // Execute the GetCurrentProgramScene request
@@ -171,23 +172,47 @@ async function toggleMicrophoneMute() {
     }
 }
 
-async function updateMuteButtonColor() {
+async function toggleDesktopAudioMute() {
     try {
-        const { inputMuted } = await obs.call('GetInputMute', { inputName: 'Mic/Aux' });
+        const { inputMuted } = await obs.call('ToggleInputMute', { inputName: 'Audio du Bureau' });
+        console.log('Toggled input mute for "Audio du Bureau". Mute status:', inputMuted);
 
         // Mettez à jour la couleur du bouton en fonction de l'état du mute
-        const muteBtn = document.getElementById('toggleMuteBtn');
-        muteBtn.classList.toggle('muted', inputMuted);
-        muteBtn.classList.toggle('unmuted', !inputMuted);
+        const desktopAudioBtn = document.getElementById('toggleDesktopAudioBtn');
+        desktopAudioBtn.classList.toggle('muted', inputMuted);
+        desktopAudioBtn.classList.toggle('unmuted', !inputMuted);
     } catch (error) {
-        console.error('Failed to get microphone mute status', error.code, error.message);
+        console.error('Failed to toggle desktop audio mute/unmute', error.code, error.message);
+    }
+}
+
+async function updateMuteButtonColor() {
+    try {
+        const { inputMuted: micMuted } = await obs.call('GetInputMute', { inputName: 'Mic/Aux' });
+        const { inputMuted: desktopAudioMuted } = await obs.call('GetInputMute', { inputName: 'Audio du Bureau' });
+
+        // Mettez à jour la couleur du bouton Microphone en fonction de l'état du mute
+        const micBtn = document.getElementById('toggleMuteBtn');
+        micBtn.classList.toggle('muted', micMuted);
+        micBtn.classList.toggle('unmuted', !micMuted);
+
+        // Mettez à jour la couleur du bouton Audio du Bureau en fonction de l'état du mute
+        const desktopAudioBtn = document.getElementById('toggleDesktopAudioBtn');
+        desktopAudioBtn.classList.toggle('muted', desktopAudioMuted);
+        desktopAudioBtn.classList.toggle('unmuted', !desktopAudioMuted);
+    } catch (error) {
+        console.error('Failed to get microphone and desktop audio mute status', error.code, error.message);
     }
 }
 
 function resetMuteButtonColor() {
-    // Réinitialiser la couleur du bouton mute/unmute
-    const muteBtn = document.getElementById('toggleMuteBtn');
-    muteBtn.classList.remove('muted', 'unmuted');
+    // Réinitialiser la couleur du bouton Microphone
+    const micBtn = document.getElementById('toggleMuteBtn');
+    micBtn.classList.remove('muted', 'unmuted');
+
+    // Réinitialiser la couleur du bouton Audio du Bureau
+    const desktopAudioBtn = document.getElementById('toggleDesktopAudioBtn');
+    desktopAudioBtn.classList.remove('muted', 'unmuted');
 }
 
 function enableButtons() {
@@ -200,6 +225,7 @@ function enableButtons() {
     document.getElementById('changeToOutroBtn').disabled = false;
     document.getElementById('changeToCamBtn').disabled = false;
     document.getElementById('toggleMuteBtn').disabled = false;
+    document.getElementById('toggleDesktopAudioBtn').disabled = false;
 }
 
 function disableButtons() {
@@ -212,4 +238,5 @@ function disableButtons() {
     document.getElementById('changeToOutroBtn').disabled = true;
     document.getElementById('changeToCamBtn').disabled = true;
     document.getElementById('toggleMuteBtn').disabled = true;
+    document.getElementById('toggleDesktopAudioBtn').disabled = true;
 }
