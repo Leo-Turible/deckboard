@@ -62,10 +62,18 @@ body {
     margin-top: 10px;
 }
 
-.custom-btn.muted {
+.custom-btn.muted, .btn-danger {
     background-color: red;
 }
 
-.custom-btn.unmuted {
+.custom-btn.unmuted, .btn-success {
     background-color: green;
+}
+
+#toggleCamBtn.active {
+    background-color: green; /* Couleur pour indiquer que la caméra est active */
+}
+
+#toggleCamBtn.inactive {
+    background-color: red; /* Couleur pour indiquer que la caméra est inactive */
 }

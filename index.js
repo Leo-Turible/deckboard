@@ -12,6 +12,7 @@ document.getElementById('changeToOutroBtn').addEventListener('click', changeToOu
 document.getElementById('changeToCamBtn').addEventListener('click', changeToCamScene);
 document.getElementById('toggleMuteBtn').addEventListener('click', toggleMicrophoneMute);
 document.getElementById('toggleDesktopAudioBtn').addEventListener('click', toggleDesktopAudioMute);
+document.getElementById('toggleCameraBtn').addEventListener('click', toggleCamera);
 
 async function connectToOBS() {
     try {
@@ -22,8 +23,11 @@ async function connectToOBS() {
         const { currentProgramSceneName } = await obs.call('GetCurrentProgramScene');
         console.log('Current program scene:', currentProgramSceneName);
 
+        // Afficher la liste des sources de la scène actuelle
+        await getSceneSources();
+
         enableButtons();
-        
+
         // Get the initial mute state and update the button color
         await updateMuteButtonColor();
 
@@ -33,6 +37,7 @@ async function connectToOBS() {
         console.error('Failed to connect', error.code, error.message);
     }
 }
+
 
 async function disconnectFromOBS() {
     await obs.disconnect();
@@ -215,6 +220,58 @@ function resetMuteButtonColor() {
     desktopAudioBtn.classList.remove('muted', 'unmuted');
 }
 
+async function getSceneSources() {
+    try {
+        // Obtenez le nom de la scène actuelle
+        const { currentProgramSceneName } = await obs.call('GetCurrentProgramScene');
+
+        // Obtenez la liste des sources de la scène actuelle
+        const { sceneItems } = await obs.call('GetSceneItemList', { 'sceneName': currentProgramSceneName });
+
+        console.log('Sources in the current scene:', sceneItems);
+    } catch (error) {
+        console.error('Failed to get scene sources', error.code, error.message);
+    }
+}
+
+async function toggleCamera() {
+    try {
+        // Obtenez le nom de la scène actuelle
+        const { currentProgramSceneName } = await obs.call('GetCurrentProgramScene');
+
+        // Obtenez l'ID de la caméra dans la scène actuelle
+        const { sceneItemId } = await obs.call('GetSceneItemId', {
+            'sceneName': currentProgramSceneName,
+            'sourceName': 'cam' // Remplacez par le nom réel de votre caméra
+        });
+
+        // Obtenez l'état d'activation actuel de la caméra
+        const { sceneItemEnabled } = await obs.call('GetSceneItemEnabled', {
+            'sceneName': currentProgramSceneName,
+            'sceneItemId': sceneItemId
+        });
+
+        // Changez l'état d'activation de la caméra
+        await obs.call('SetSceneItemEnabled', {
+            'sceneName': currentProgramSceneName,
+            'sceneItemId': sceneItemId,
+            'sceneItemEnabled': !sceneItemEnabled // Inversez l'état actuel
+        });
+
+        // Mettez à jour la couleur et le texte du bouton
+        const cameraBtn = document.getElementById('toggleCameraBtn');
+        cameraBtn.classList.toggle('btn-success', !sceneItemEnabled); // Vert si désactivé
+        cameraBtn.classList.toggle('btn-danger', sceneItemEnabled); // Rouge si activé
+        cameraBtn.textContent = sceneItemEnabled ? 'Caméra désactivée' : 'Caméra Activée';
+
+        console.log('Camera toggled. New state:', !sceneItemEnabled);
+    } catch (error) {
+        console.error('Failed to toggle camera', error.code, error.message);
+    }
+}
+
+
+
 function enableButtons() {
     document.getElementById('connectBtn').disabled = true;
     document.getElementById('disconnectBtn').disabled = false;
@@ -226,6 +283,7 @@ function enableButtons() {
     document.getElementById('changeToCamBtn').disabled = false;
     document.getElementById('toggleMuteBtn').disabled = false;
     document.getElementById('toggleDesktopAudioBtn').disabled = false;
+    document.getElementById('toggleCameraBtn').disabled = false;
 }
 
 function disableButtons() {
@@ -239,4 +297,6 @@ function disableButtons() {
     document.getElementById('changeToCamBtn').disabled = true;
     document.getElementById('toggleMuteBtn').disabled = true;
     document.getElementById('toggleDesktopAudioBtn').disabled = true;
+    document.getElementById('toggleCameraBtn').disabled = true;
 }
+
