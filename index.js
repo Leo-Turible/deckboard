@@ -13,6 +13,7 @@ document.getElementById('changeToCamBtn').addEventListener('click', changeToCamS
 document.getElementById('toggleMuteBtn').addEventListener('click', toggleMicrophoneMute);
 document.getElementById('toggleDesktopAudioBtn').addEventListener('click', toggleDesktopAudioMute);
 document.getElementById('toggleCameraBtn').addEventListener('click', toggleCamera);
+document.getElementById('startAbonneMediaBtn').addEventListener('click', startAbonneMedia);
 
 async function connectToOBS() {
     try {
@@ -270,6 +271,49 @@ async function toggleCamera() {
     }
 }
 
+async function startAbonneMedia() {
+    try {
+        // Nom de la source média à contrôler
+        const abonneMediaInputName = 'abonne';
+        const logoMediaInputName = 'logo';
+
+        // Fonction pour démarrer ou redémarrer un média
+        const startOrRestartMedia = async (inputName) => {
+            await obs.call('TriggerMediaInputAction', {
+                'inputName': inputName,
+                'mediaAction': 'OBS_WEBSOCKET_MEDIA_INPUT_ACTION_RESTART'
+            });
+        };
+
+        // Obtenir l'état actuel du média "abonne"
+        const { mediaState: abonneMediaState } = await obs.call('GetMediaInputStatus', { 'inputName': abonneMediaInputName });
+        console.log('Abonne Media state:', abonneMediaState);
+
+        // Obtenir l'état actuel du média "logo"
+        const { mediaState: logoMediaState } = await obs.call('GetMediaInputStatus', { 'inputName': logoMediaInputName });
+        console.log('Logo Media state:', logoMediaState);
+
+        // Déclencher l'action en fonction de l'état actuel pour le média "abonne"
+        if (abonneMediaState === 'OBS_MEDIA_STATE_PLAYING') {
+            await startOrRestartMedia(abonneMediaInputName);
+            console.log('Abonne Media restarted');
+        } else {
+            await startOrRestartMedia(abonneMediaInputName);
+            console.log('Abonne Media started');
+        }
+
+        // Déclencher l'action en fonction de l'état actuel pour le média "logo"
+        if (logoMediaState === 'OBS_MEDIA_STATE_PLAYING') {
+            await startOrRestartMedia(logoMediaInputName);
+            console.log('Logo Media restarted');
+        } else {
+            await startOrRestartMedia(logoMediaInputName);
+            console.log('Logo Media started');
+        }
+    } catch (error) {
+        console.error('Failed to start/stop media', error.code, error.message);
+    }
+}
 
 
 function enableButtons() {
@@ -284,6 +328,7 @@ function enableButtons() {
     document.getElementById('toggleMuteBtn').disabled = false;
     document.getElementById('toggleDesktopAudioBtn').disabled = false;
     document.getElementById('toggleCameraBtn').disabled = false;
+    document.getElementById('startAbonneMediaBtn').disabled = false;
 }
 
 function disableButtons() {
@@ -298,5 +343,6 @@ function disableButtons() {
     document.getElementById('toggleMuteBtn').disabled = true;
     document.getElementById('toggleDesktopAudioBtn').disabled = true;
     document.getElementById('toggleCameraBtn').disabled = true;
+    document.getElementById('startAbonneMediaBtn').disabled = true;
 }
 
