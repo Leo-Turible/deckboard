@@ -17,7 +17,7 @@ document.getElementById('startAbonneMediaBtn').addEventListener('click', startAb
 
 async function connectToOBS() {
     try {
-        await obs.connect('ws://192.168.1.14:4444');
+        await obs.connect('ws://192.168.1.XX:4444');
         console.log('Connected to OBS Studio');
 
         // Execute the GetCurrentProgramScene request
@@ -167,7 +167,7 @@ function disableSceneButtons(currentSceneName) {
 async function toggleMicrophoneMute() {
     try {
         const { inputMuted } = await obs.call('ToggleInputMute', { inputName: 'Mic/Aux' });
-        console.log('Toggled input mute for "Main Microphone". Mute status:', inputMuted);
+        console.log('Toggled input mute for "Mic/Aux". Mute status:', inputMuted);
 
         // Mettez à jour la couleur du bouton en fonction de l'état du mute
         const muteBtn = document.getElementById('toggleMuteBtn');
