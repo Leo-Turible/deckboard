@@ -17,7 +17,7 @@ document.getElementById('startAbonneMediaBtn').addEventListener('click', startAb
 
 async function connectToOBS() {
     try {
-        await obs.connect('ws://10.152.7.43:4444');
+        await obs.connect('ws://192.168.1.14:4444');
         console.log('Connected to OBS Studio');
 
         // Execute the GetCurrentProgramScene request
@@ -310,10 +310,29 @@ async function startAbonneMedia() {
             await startOrRestartMedia(logoMediaInputName);
             console.log('Logo Media started');
         }
+
+        // Mettre à jour la couleur du bouton en fonction de l'état du média "abonne"
+        updateAbonneMediaButtonColor(abonneMediaState);
     } catch (error) {
         console.error('Failed to start/stop media', error.code, error.message);
     }
 }
+
+// Fonction pour mettre à jour la couleur du bouton en fonction de l'état du média "abonne"
+function updateAbonneMediaButtonColor(mediaState) {
+    const abonneMediaBtn = document.getElementById('startAbonneMediaBtn');
+
+    if (mediaState === 'OBS_MEDIA_STATE_PLAYING') {
+        // Média en cours de lecture, mettez le bouton en jaune/orange
+        abonneMediaBtn.classList.remove('btn-success');
+        abonneMediaBtn.classList.add('btn-warning');
+    } else {
+        // Média terminé, remettez le bouton en vert
+        abonneMediaBtn.classList.remove('btn-warning');
+        abonneMediaBtn.classList.add('btn-success');
+    }
+}
+
 
 
 function enableButtons() {
